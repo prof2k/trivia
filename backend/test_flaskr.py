@@ -24,7 +24,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -60,7 +60,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource Not Found')
 
     def test_delete_question(self):
-        res = self.client().delete('/questions/13')
+        res = self.client().delete('/questions/22')
         data = res.json
 
         self.assertEqual(res.status_code, 200)
@@ -82,7 +82,8 @@ class TriviaTestCase(unittest.TestCase):
             'difficulty': 5
         }
 
-        res = self.client().post('/questions', data=json.dumps(body), content_type='application/json')
+        res = self.client().post('/questions', data=json.dumps(body),
+                                 content_type='application/json')
         data = res.json
 
         self.assertEqual(res.status_code, 200)
@@ -97,8 +98,9 @@ class TriviaTestCase(unittest.TestCase):
             'difficulty': "Hello"
         }
 
-        res = self.client().post('/questions', data=json.dumps(body), content_type='application/json')
-        data  = res.json
+        res = self.client().post('/questions', data=json.dumps(body),
+                                 content_type='application/json')
+        data = res.json
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
@@ -134,6 +136,53 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Resource Not Found')
+
+    def test_play_quiz(self):
+        body = {
+            "quiz_category": {
+                "id": 1,
+                "type": "Science"
+            },
+            "previous_questions": [20, 21]
+        }
+        res = self.client().post('/play',data=json.dumps(body),
+                                 content_type='application/json')
+        data = res.json
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data["question"])
+
+    def test_quiz_questions_finished(self):
+        body = {
+            "quiz_category": {
+                "id": 1,
+                "type": "Science"
+            },
+            "previous_questions": [20, 21, 29, 31]
+        }
+
+        res = self.client().post('/play',data=json.dumps(body),
+                                 content_type='application/json')
+        data = res.json
+
+        self.assertEqual(res.status_code, 200)
+
+    def test_400_play_quiz(self):
+        body = {
+            "quiz_category": {
+                "id": 9,
+                "type": "Science"
+            },
+            "previous_questions": [20, 21]
+        }
+
+        res = self.client().post('/play',data=json.dumps(body),
+                                 content_type='application/json')
+        data = res.json
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Bad Request')      
 
 
 # Make the tests conveniently executable
