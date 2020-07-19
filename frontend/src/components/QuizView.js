@@ -16,7 +16,7 @@ class QuizView extends Component {
         numCorrect: 0,
         currentQuestion: {},
         guess: '',
-        forceEnd: false
+        forceEnd: false,
     }
   }
 
@@ -107,7 +107,7 @@ class QuizView extends Component {
                   <div className="play-category" onClick={this.selectCategory}>ALL</div>
                   {Object.keys(this.state.categories).map(id => {
                   return (
-                    <div
+                    <div 
                       key={id}
                       value={id}
                       className="play-category"
@@ -152,7 +152,7 @@ class QuizView extends Component {
   renderPlay(){
     return this.state.previousQuestions.length === questionsPerPlay || this.state.forceEnd
       ? this.renderFinalScore()
-      : this.state.showAnswer 
+      : this.state.showAnswer
         ? this.renderCorrectAnswer()
         : (
           <div className="quiz-play-holder">

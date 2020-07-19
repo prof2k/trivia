@@ -165,12 +165,12 @@ def create_app(test_config=None):
     # To play the quiz
     @app.route('/play', methods=['POST'])
     def get_random_question():
-        category = request.get_json()['quiz_category']['id']
+        category = int(request.get_json()['quiz_category']['id'])
         previous_questions = request.get_json()['previous_questions']
 
         try:
             def still_left(list):
-                if len(previous_questions) <= len(list):
+                if len(previous_questions) < len(list):
                     return True
                 else:
                     return False
@@ -181,7 +181,7 @@ def create_app(test_config=None):
                 raise Exception
 
             # To get all questions irrespective of category
-            elif category == 0:
+            elif category == 0: 
                 questions = Question.query.all()
 
                 # If the all items in the list have been used up
@@ -200,7 +200,7 @@ def create_app(test_config=None):
                     Question.category == category).all()
 
                 # If the all items in the list have been used up
-                if still_left(questions):
+                if still_left(questions): 
                     filtered_questions = list(filter(
                         lambda question: (question.id not in previous_questions), questions))
                     question = random.choice(filtered_questions)
